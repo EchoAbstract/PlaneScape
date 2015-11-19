@@ -18,7 +18,11 @@ private:
   static const std::vector<std::string> map;
 
 public:
-  static std::string getImage( int index ){
+  static int numberOfImages(){
+    return map.size();
+  }
+
+  static std::string getImageName( int index ){
     if (index < 0 || index > 11){
       return map[0];
     } else {
@@ -89,7 +93,7 @@ public:
 	void draw() override;
   void resize() override;
 
-  static const int NUM_PLANES = 12;
+  static const int NUM_PLANES = ImageAssetMap::numberOfImages();
   static constexpr int rows = 3;
   static constexpr int cols = NUM_PLANES / rows;
   static constexpr float padding = .5f;
@@ -114,21 +118,22 @@ void PlaneScapeApp::setup(){
 
   MotionManager::enable();
 
-  mCameraPos = vec3( 10, 9, 15 );
+  mCameraPos = vec3( 5, 9, 15 );
   mLookingAt = vec3( 0 );
   mCam.setNearClip( 2 );
   mCam.setFarClip( 1000 );
   
 
   mTouchUi.connect( getWindow() );
-  mTouchUi.setPanSpeed( vec2( 0.0067f ) );
-  mTouchUi.setScaleMin( vec2( 0.5f ) );
+  //  mTouchUi.setPanSpeed( vec2( 0.0067f ) );
+  mTouchUi.setPanSpeed( vec2( 0.01f ) );
+  mTouchUi.setScaleMin( vec2( 0.25f ) );
 
   for (int i = 0; i < NUM_PLANES; i++){
     // Get color relative index
     float rel = i / static_cast<float>(NUM_PLANES);
     
-    std::string imgName = ImageAssetMap::getImage( i );
+    std::string imgName = ImageAssetMap::getImageName( i );
     auto img = loadImage( loadAsset( imgName ) );
 
     mPlanes[i] = ImagePlane(vec2( mPlaneWidth, mPlaneHeight ), ColorA( CM_HSV, rel, 1, 1, .75f ), img );
