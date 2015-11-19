@@ -61,16 +61,17 @@ public:
     texture = gl::Texture::create( img );
     texture->bind();
     
+    auto rot = geom::Rotate( -M_PI / 2.f, vec3( 0, 1, 0 ) );
+
     auto c = geom::Constant( geom::COLOR, color );
-    auto lambert = gl::ShaderDef().texture().lambert().color();
+    auto lambert = gl::ShaderDef().texture().lambert();
     shader = gl::getStockShader( lambert );
     plane = geom::Plane().size( size );
-    batch = gl::Batch::create( plane >> c, shader );
+    batch = gl::Batch::create( plane >> rot, shader );
   }
   
   void draw(){
     gl::ScopedModelMatrix scpModelMatrix;
-    gl::color( color );
     batch->draw();
   }
 
