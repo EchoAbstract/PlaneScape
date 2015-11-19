@@ -16,14 +16,16 @@ using namespace std;
 class ImageAssetMap {
 private:
   static const std::vector<std::string> map;
+  static constexpr int numImages = 24;
 
 public:
-  static int numberOfImages(){
-    return map.size();
+  static constexpr int numberOfImages(){
+    return numImages;
   }
 
   static std::string getImageName( int index ){
-    if (index < 0 || index > 11){
+    assert( numImages == map.size() );
+    if (index < 0 || index > numImages-1){
       return map[0];
     } else {
       return map[index];
@@ -43,7 +45,19 @@ const std::vector<std::string> ImageAssetMap::map {
     "800px-Airplane_reflection.jpg",
     "800x600_Wallpaper_Blue_Sky.png",
     "800px-Clipboard_scr3.jpg",
-    "800px-Dolphin_and_venus.jpg"
+    "800px-Dolphin_and_venus.jpg",
+    "Eye_farm_01.jpg",
+    "800px-Erodedcity_01.jpg",
+    "799px-Emirgan_04496.jpg",
+    "800px-Emeralda_Marsh-Island_looking_west01.jpg",
+    "800px-Fanning_Springs_Park_springs05.jpg",
+    "800px-Clingmans_Dome-27527-1.jpg",
+    "800px-Eastern_Bluebird-27527.jpg",
+    "800px-Downtown_skyline_at_night.jpg",
+    "800px-Great_Egret_Inching_Closer.JPG",
+    "800px-Grayson_Highlands_Ponies-27527-6.jpg",
+    "800px-Huella.jpg",
+    "800px-Bubbles_in_the_dark.jpg"
 };
 
 
@@ -65,7 +79,7 @@ public:
     texture = gl::Texture::create( img );
     texture->bind();
     
-    auto rot = geom::Rotate( -M_PI / 2.f, vec3( 0, 1, 0 ) );
+    auto rot = geom::Rotate( M_PI, vec3( 0, 1, 0 ) );
 
     auto c = geom::Constant( geom::COLOR, color );
     auto lambert = gl::ShaderDef().texture().lambert();
@@ -94,7 +108,7 @@ public:
   void resize() override;
 
   static const int NUM_PLANES = ImageAssetMap::numberOfImages();
-  static constexpr int rows = 3;
+  static constexpr int rows = 4;
   static constexpr int cols = NUM_PLANES / rows;
   static constexpr float padding = .5f;
   float mPlaneWidth = 800.f;
@@ -118,14 +132,13 @@ void PlaneScapeApp::setup(){
 
   MotionManager::enable();
 
-  mCameraPos = vec3( 5, 9, 15 );
+  mCameraPos = vec3( 5, 5, 5 );
   mLookingAt = vec3( 0 );
-  mCam.setNearClip( 2 );
+  mCam.setNearClip( .25 );
   mCam.setFarClip( 1000 );
   
 
   mTouchUi.connect( getWindow() );
-  //  mTouchUi.setPanSpeed( vec2( 0.0067f ) );
   mTouchUi.setPanSpeed( vec2( 0.01f ) );
   mTouchUi.setScaleMin( vec2( 0.25f ) );
 
@@ -166,8 +179,8 @@ void PlaneScapeApp::draw(){
 	gl::clear( Color( 0, 0, 0 ) ); 
 
   const float scale = mTouchUi.getScale().x;
-  const float xPan = mTouchUi.getPan().y;  // Landscape mode swaps x and y
-  const float yPan = -mTouchUi.getPan().x; // and Swiping is negative y motion
+  const float xPan = -mTouchUi.getPan().x;
+  const float yPan = -mTouchUi.getPan().y;
 
   vec3 camPos( mCameraPos.x + xPan, mCameraPos.y, mCameraPos.z + yPan );
   mCam.lookAt( scale * camPos, mLookingAt );
